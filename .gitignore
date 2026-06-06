@@ -1,7 +1,9 @@
 # Dependencies
 node_modules/
 
-# Local databases
+# Local databases & wildcards
+*.db
+*.db-journal
 backend/workspace.db
 backend/workspace.db-journal
 
@@ -19,6 +21,16 @@ frontend/.env.production
 # Compiled outputs
 backend/dist/
 frontend/dist/
+dist/
+
+# Coverage reports
+coverage/
+backend/coverage/
+frontend/coverage/
+
+# Logs
+*.log
+logs/
 
 # IDE setups
 .vscode/
@@ -28,8 +40,12 @@ frontend/dist/
 *.njsproj
 *.sln
 
-# Test outputs
+# Test & Temp outputs
 test_out*
 test_run*
 test-results/
 playwright-report/
+.tmp/
+tmp/
+temp/
+*.tmp

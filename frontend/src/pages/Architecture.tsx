@@ -67,15 +67,10 @@ export default function Architecture({ activeProject, onNavigateToFile }: Archit
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
-    console.log("ARCHITECTURE EFFECT RUNNING, activeProject ID:", activeProject?.id);
     const fetchGraph = async () => {
       if (!activeProject) {
-        console.log("Architecture effect: activeProject is falsy!");
         return;
       }
-      console.log("Architecture effect: calling fetch graph...");
-      console.log("Is fetch mocked?", fetch === globalThis.fetch, typeof fetch, fetch.toString());
-      console.log("Mock implementation:", (fetch as any).getMockImplementation ? (fetch as any).getMockImplementation()?.toString() : "not a spy");
       setLoading(true);
       try {
         const token = typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function' ? localStorage.getItem('token') : null;
@@ -186,7 +181,6 @@ export default function Architecture({ activeProject, onNavigateToFile }: Archit
         setNodes(positionedNodes);
         setEdges(data.edges);
       } catch (err) {
-        console.log("FETCH GRAPH ERROR:", err);
         console.error('Error fetching visualizer graph:', err);
       } finally {
         setLoading(false);

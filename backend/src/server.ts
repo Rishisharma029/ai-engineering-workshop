@@ -63,7 +63,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`=============================================`);
-    console.log(` AI Engineering Workspace Backend Listening  `);
+    console.log(` AI Engineering Workshop Backend Listening   `);
     console.log(` Port: http://localhost:${PORT}             `);
     console.log(`=============================================`);
   });

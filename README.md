@@ -1,12 +1,11 @@
-# AI Engineering Workshop (v6)
+# AI Engineering Workshop (v1.0.0)
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Tests](https://img.shields.io/badge/tests-20%2B%20passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-93.5%25-green)
-![Docker](https://img.shields.io/badge/docker-ready-blue)
-![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
-![License](https://img.shields.io/badge/license-MIT-purple)
 ![Version](https://img.shields.io/badge/version-v1.0.0-orange)
+![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
+![React](https://img.shields.io/badge/react-v19-61dafb?logo=react)
+![Node.js](https://img.shields.io/badge/node.js-v20-339933?logo=node.js)
+![Docker](https://img.shields.io/badge/docker-ready-2496ed?logo=docker)
+![License](https://img.shields.io/badge/license-MIT-purple)
 
 A production-grade, portfolio-ready developer intelligence platform that transforms raw code repositories into structured engineering reports, interactive visual topologies, risk heatmaps, mock interview preparation decks, and ATS-scorecard resume packages.
 
@@ -14,7 +13,7 @@ It acts as an **AI CTO, Security Auditor, and Interview Coach** for software eng
 
 ---
 
-## 🚀 Key Features
+## 🚀 Features
 
 ### 1. Repository Intelligence Inspector
 - **3-Pane Split View**: Interactive File Tree explorer, Code Viewer pane, and AI Inspector sidebar.
@@ -51,11 +50,61 @@ It acts as an **AI CTO, Security Auditor, and Interview Coach** for software eng
 
 ---
 
-## 🛠️ Technology Stack
+## 📐 Architecture
 
-- **Frontend**: React, TypeScript, Vite, Recharts, Framer Motion, Lucide Icons.
-- **Backend**: Express, Node.js, TypeScript, SQL/SQLite database adapter.
-- **Analytics Engine**: AST directory crawler and static code analyzer.
+The platform operates on a decoupled client-server architecture with an offline fallback model for high portability:
+
+```mermaid
+graph TD
+    Client[React SPA Frontend] -->|HTTP API / SSE| API[Express API Server]
+    API -->|SQLite / PostgreSQL| DB[(Database Store)]
+    API -->|Local AST Parser| AST[Static Analysis Service]
+    API -->|Google Gemini API| LLM[Gemini 2.5 Flash / Mock Fallback]
+```
+
+- **Frontend**: Serves as the interactive developer workspace, handling visual renders, graph drawing, state mapping, and file uploads.
+- **Backend**: Exposes secure REST endpoints, triggers localized directory static analysis, structures AST parsing, handles database records, and dispatches AI prompts.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React (v19), TypeScript, Vite, Recharts, Framer Motion, Lucide Icons, Vanilla CSS.
+- **Backend**: Node.js, Express, TypeScript, tsx execution runtime.
+- **Storage**: PostgreSQL (production database) and SQLite (automatic local file fallback).
+- **Tooling**: Playwright (E2E testing), Vitest (component & unit testing), ESLint (static code analysis).
+
+---
+
+## 📸 Screenshots
+
+*Ensure screenshots are placed under the `/screenshots` directory:*
+
+- **Dashboard**: ![Dashboard](screenshots/dashboard.png)
+- **Risk Heatmap**: ![Risk Heatmap](screenshots/heatmap.png)
+- **Architecture**: ![Architecture](screenshots/architecture.png)
+- **Interview Prep**: ![Interview Prep](screenshots/interview.png)
+- **Resume Package**: ![Resume Package](screenshots/resume.png)
+
+---
+
+## 📂 Folder Structure
+
+```
+├── .github/workflows/      # GitHub Actions CI/CD pipelines
+├── backend/                # Express & Node.js API server
+│   ├── src/                # Backend TypeScript source files
+│   ├── Dockerfile          # Multi-stage production backend Docker build
+│   └── package.json        # Backend dependencies and CLI script definitions
+├── frontend/               # React client SPA
+│   ├── src/                # Frontend React components & hooks
+│   ├── Dockerfile          # Nginx production build Docker configuration
+│   └── package.json        # Frontend dependencies
+├── e2e/                    # Playwright end-to-end user flows
+├── screenshots/            # UI screenshot assets
+├── docker-compose.yml      # Orchestrates database, backend, and frontend
+└── package.json            # Root workspace configuration
+```
 
 ---
 
@@ -63,23 +112,89 @@ It acts as an **AI CTO, Security Auditor, and Interview Coach** for software eng
 
 ### Prerequisites
 - Node.js (v18+)
-- npm
+- npm (v9+)
 
 ### Installation
-1. Clone the repository and navigate to the directory:
+1. Clone the repository and navigate to the root directory:
    ```bash
-   cd "AI Engineering Workspace (Best Long-Term)   new project"
+   cd "AI Engineering Workshop"
    ```
-2. Install dependencies:
+2. Install all dependencies:
    ```bash
-   npm install --prefix backend
-   npm install --prefix frontend
-   ```
-3. Start the local dev servers:
-   ```bash
-   # Starts Vite client on http://localhost:3000 and API listener on port 5000
-   npm run dev
+   npm run install:all
    ```
 
+### Running Locally
+To launch both the backend Express listener and the frontend Vite server concurrently:
+```bash
+npm run dev
+```
+* Access the client at `http://localhost:3000`
+* Backend API listening on `http://localhost:5000`
+
 ---
-*made by rishi sharma all rights reserved*
+
+## 🐳 Docker Setup
+
+The platform is fully containerized for production deployment. Start the entire stack with a single command:
+
+```bash
+docker compose up -d --build
+```
+
+### Services Defined:
+1. **database**: Runs PostgreSQL 15 alpine image with volumes mapping to host for persistent storage.
+2. **backend**: Serves the API endpoints on port `5000`. Connects to postgres database using a service health check condition.
+3. **frontend**: Built with a production React static build served by Nginx on port `3000`. Uses fallback routing to support client SPA pathing.
+
+---
+
+## 🧪 Testing
+
+The codebase implements comprehensive testing coverage across unit, integration, and E2E layers.
+
+### Run Backend Tests (Vitest)
+```bash
+npm run test --prefix backend
+```
+
+### Run Frontend Tests (Vitest)
+```bash
+npm run test --prefix frontend
+```
+
+### Run E2E Tests (Playwright)
+Ensure local dev servers are active before executing E2E flows:
+```bash
+npx playwright test
+```
+
+### Run Typechecks
+```bash
+npm run typecheck --prefix backend
+npm run typecheck --prefix frontend
+```
+
+---
+
+## ⚙️ CI/CD
+
+Continuous Integration and Delivery workflows are managed via GitHub Actions:
+- **`ci.yml`**: Installs dependencies, runs lints, typechecks source directories, executes unit/integration tests, and compiles production build bundles.
+- **`security.yml`**: Runs Gitleaks secret scanner on pushed commits and performs npm security audits.
+- **`docker.yml`**: Validates backend and frontend Docker builds on pull requests.
+- **`release.yml`**: Triggered on publication of a new GitHub Release, packaging compiled builds and uploading assets automatically.
+
+---
+
+## 🔮 Future Improvements
+
+- Add integrations for GitHub App permissions to sync repositories automatically on webhook triggers.
+- Support deep semantic vector embedding caching using ChromaDB or pgvector.
+- Integrate SonarQube CLI rules for security scanning reports.
+
+---
+
+## ✍️ Author
+
+**Rishi Sharma** - *All rights reserved.*

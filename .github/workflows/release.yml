@@ -1,0 +1,47 @@
+name: Release Automation
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install All Dependencies
+        run: npm run install:all
+
+      - name: Build Backend Server
+        run: npm run build --prefix backend
+
+      - name: Build Frontend Client
+        run: npm run build --prefix frontend
+
+      - name: Verify Docker Builds
+        run: |
+          docker build -t workspace-backend:latest ./backend
+          docker build -t workspace-frontend:latest ./frontend
+
+      - name: Package Release Assets
+        run: |
+          mkdir release-package
+          cp -r backend/dist release-package/backend-dist
+          cp -r frontend/dist release-package/frontend-dist
+          cp docker-compose.yml release-package/
+          zip -r release-workspace-assets.zip release-package
+
+      - name: Upload ZIP to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-workspace-assets.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

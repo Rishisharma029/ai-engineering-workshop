@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Local databases
+backend/workspace.db
+backend/workspace.db-journal
+
+# Secrets configuration
+.env
+.env.local
+.env.production
+backend/.env
+backend/.env.local
+backend/.env.production
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Compiled outputs
+backend/dist/
+frontend/dist/
+
+# IDE setups
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Test outputs
+test_out*
+test_run*
+test-results/
+playwright-report/

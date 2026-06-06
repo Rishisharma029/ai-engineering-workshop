@@ -1,0 +1,20 @@
+name: Docker Build Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  docker-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Backend Docker Build
+        run: docker build -t workspace-backend:test ./backend
+
+      - name: Verify Frontend Docker Build
+        run: docker build -t workspace-frontend:test ./frontend

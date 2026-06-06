@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #030712; /* Tailwind gray-950 */
+  color: #f3f4f6; /* Tailwind gray-100 */
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Premium Typography Titles */
+.font-title {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Glowing blur backgrounds */
+.bg-glow-purple {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.bg-glow-blue {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+/* Glassmorphism card utilities */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(168, 85, 247, 0.2);
+  box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Animated border glow (Linear/Cursor style) */
+@keyframes borderGlow {
+  0%, 100% {
+    border-color: rgba(168, 85, 247, 0.2);
+  }
+  50% {
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+}
+
+.glow-border-active {
+  animation: borderGlow 4s infinite ease-in-out;
+}
+
+/* Dot grid background */
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Shimmer animations for empty state skeletons */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer-loader {
+  position: relative;
+  overflow: hidden;
+  background-color: #1e293b;
+}
+
+.shimmer-loader::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(255, 255, 255, 0.05) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.8s infinite;
+  content: '';
+}

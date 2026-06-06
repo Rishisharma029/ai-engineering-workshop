@@ -1,0 +1,17 @@
+# Environment Secrets
+.env
+.env.local
+.env.production
+
+# Database persistence files
+workspace.db
+workspace.db-journal
+
+# Dependencies
+node_modules/
+
+# Compiled JS Output
+dist/
+
+# Log files
+*.log

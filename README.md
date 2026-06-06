@@ -1,4 +1,4 @@
-# AI Developer Intelligence Platform (v6)
+# AI Engineering Workshop (v6)
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Tests](https://img.shields.io/badge/tests-20%2B%20passing-brightgreen)

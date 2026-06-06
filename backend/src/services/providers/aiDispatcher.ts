@@ -484,10 +484,10 @@ function getMockChatResponse(messages: { role: string; content: string }[]): str
   }
 
   if (query.includes('explain') || query.includes('what does')) {
-    return `### Codebase Architecture & File Summary 💡\n\nThis workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.\n\nKey directories:\n1. **frontend/src**: Contains components, hooks, and views for the Developer Intelligence dashboards.\n2. **backend/src**: Implements controllers, services, database migrations, and AI providers.\n\n*Note: Running in offline mock fallback.*`;
+    return `### Codebase Architecture & File Summary 💡\n\nThis workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.\n\nKey directories:\n1. **frontend/src**: Contains components, hooks, and views for the AI Engineering Workshop dashboards.\n2. **backend/src**: Implements controllers, services, database migrations, and AI providers.\n\n*Note: Running in offline mock fallback.*`;
   }
   if (query.includes('bug') || query.includes('error') || query.includes('leak') || query.includes('risk')) {
     return `### Static Scanning Code Observations 🐛\n\n- **Hardcoded Secret Alert**: Potential configuration keys detected in code files.\n- **Nested Array Loops**: Large computational blocks found in the SVG graphing helpers.\n- **Error Handlers**: Express routers lack complete try-catch boundaries on network exceptions.`;
   }
-  return `### AI Developer Intelligence Assistant 🤖\n\nI processed your request: *"${lastUserMsg}"*.\n\nSince no active LLM API Keys are configured in your backend \`.env\` file, I am serving this simulated response. Configure \`GEMINI_API_KEY\` or \`OPENAI_API_KEY\` in your local env setup to activate live vector search and RAG indexing.`;
+  return `### AI Engineering Workshop Assistant 🤖\n\nI processed your request: *"${lastUserMsg}"*.\n\nSince no active LLM API Keys are configured in your backend \`.env\` file, I am serving this simulated response. Configure \`GEMINI_API_KEY\` or \`OPENAI_API_KEY\` in your local env setup to activate live vector search and RAG indexing.`;
 }

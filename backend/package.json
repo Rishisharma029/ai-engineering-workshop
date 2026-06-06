@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "AI Engineering Workspace Backend",
+  "description": "AI Engineering Workshop Backend",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {

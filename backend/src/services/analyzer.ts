@@ -618,10 +618,10 @@ export function analyzeCodebase(files: { path: string; content: string; size: nu
       }
     },
     portfolioPackage: {
-      readme: `# Project Developer Intelligence\n\nGenerated architectural reviews and CV achievements logs.`,
+      readme: `# AI Engineering Workshop\n\nGenerated architectural reviews and CV achievements logs.`,
       caseStudy: `## Case Study: Optimizing Codebase\n\nAddressed ${vulnerabilities.length} key security risks and mapped scalable roadmaps.`,
       linkedInPost: `🚀 Excited to publish my project Workspace! Audited engineering ratings, computed CVSS, and mapped SVG graph topologies.`,
-      projectDescription: `A high-performance codebase scanner and developer intelligence suite parsing repository dependencies and mock coding question viva decks.`,
+      projectDescription: `A high-performance codebase scanner and AI Engineering Workshop suite parsing repository dependencies and mock coding question viva decks.`,
       interviewExplanation: `This app automates static scanning across repositories, running vulnerability checks and compiling RAG indices for codebase chat copilots.`
     },
     repoIntel: {

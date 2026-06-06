@@ -53,7 +53,7 @@ export default function Sidebar({
             <Terminal className="w-4.5 h-4.5 text-white" />
           </div>
           <div>
-            <h1 className="text-sm font-bold font-title text-slate-100 leading-none">AI Workspace</h1>
+            <h1 className="text-sm font-bold font-title text-slate-100 leading-none">AI Workshop</h1>
             <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Engineering Suite</span>
           </div>
         </div>

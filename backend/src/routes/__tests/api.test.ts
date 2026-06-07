@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import AdmZip from 'adm-zip';
 import { app } from '../../server.js';
-import { query } from '../../config/db.js';
+import { query, closeDatabase, initializeDatabase } from '../../config/db.js';
+import { seedDefaultUser } from '../auth.js';
 
 // Mock the GitHub fetching service to prevent external API calls during testing
 vi.mock('../../services/github.js', () => {
@@ -18,9 +19,15 @@ describe('Root Level API Alias Routes Integration', () => {
   let projectId: number;
 
   beforeAll(async () => {
-    // Ensure table structure exists (server.ts runs initializeDatabase at start)
+    // Synchronously initialize database and seed default user for tests
+    await initializeDatabase();
+    await seedDefaultUser();
     // Clean up any test projects
     await query("DELETE FROM projects WHERE name = 'Test-Zip-Project'");
+  });
+
+  afterAll(async () => {
+    await closeDatabase();
   });
 
   it('1. should upload a ZIP file, execute static analysis, and return project payload', async () => {

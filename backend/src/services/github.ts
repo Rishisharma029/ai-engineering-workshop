@@ -111,7 +111,7 @@ function getMockGithubRepo(): GitHubFileInfo[] {
 const jwt = require('jsonwebtoken');
 const app = express();
 
-const SECRET = 'super-secret-key-12345'; // SECURITY RISK
+const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 app.use(express.json());
 

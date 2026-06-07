@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { initializeDatabase } from './config/db.js';
+import { requestLogger, logger } from './middleware/logger.js';
 
 // Load environmental variables
 dotenv.config();
@@ -19,12 +20,11 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Initialize DB schema
-await initializeDatabase();
+// Request logging middleware
+app.use(requestLogger);
 
 // API Router mappings
 import authRouter, { seedDefaultUser } from './routes/auth.js';
-await seedDefaultUser();
 import projectsRouter from './routes/projects.js';
 import analysisRouter from './routes/analysis.js';
 import chatRouter from './routes/chat.js';
@@ -55,18 +55,36 @@ app.get('/health', (req, res) => {
 
 // Global Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled Server Error:', err);
+  logger.error('Unhandled Server Error: %s', err.stack || err.message || err);
   res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
-// Bind server port
+// Decoupled async startup sequence
+async function startServer() {
+  try {
+    // Initialize DB schema
+    await initializeDatabase();
+    // Seed default user
+    await seedDefaultUser();
+
+    if (process.env.NODE_ENV !== 'test') {
+      app.listen(PORT, () => {
+        logger.info(`=============================================`);
+        logger.info(` AI Engineering Workshop Backend Listening   `);
+        logger.info(` Port: http://localhost:${PORT}             `);
+        logger.info(`=============================================`);
+      });
+    }
+  } catch (error) {
+    logger.error('Server startup failed: %o', error);
+    process.exit(1);
+  }
+}
+
+// Invoke startServer
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`=============================================`);
-    console.log(` AI Engineering Workshop Backend Listening   `);
-    console.log(` Port: http://localhost:${PORT}             `);
-    console.log(`=============================================`);
-  });
+  startServer();
 }
 
 export { app };
+

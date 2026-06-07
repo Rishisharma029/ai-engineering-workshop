@@ -3,6 +3,7 @@ import sqlite3 from 'sqlite3';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import { logger } from '../middleware/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,14 +15,25 @@ const isPg = !!dbUrl;
 let pgPool: pg.Pool | null = null;
 let sqliteDb: sqlite3.Database | null = null;
 
-if (isPg) {
-  console.log('Database: Using PostgreSQL');
-  pgPool = new pg.Pool({ connectionString: dbUrl });
-} else {
-  console.log('Database: Using local SQLite (fallback mode)');
-  const dbPath = path.resolve(__dirname, '../../workspace.db');
-  sqliteDb = new sqlite3.Database(dbPath);
+export function ensureDbConnected() {
+  if (isPg) {
+    if (!pgPool) {
+      logger.info('Database: Using PostgreSQL');
+      pgPool = new pg.Pool({ connectionString: dbUrl });
+    }
+  } else {
+    if (!sqliteDb) {
+      logger.info('Database: Using local SQLite (fallback mode)');
+      const dbPath = path.resolve(__dirname, '../../workspace.db');
+      sqliteDb = new sqlite3.Database(dbPath);
+      sqliteDb.run('PRAGMA journal_mode = WAL;');
+      sqliteDb.run('PRAGMA busy_timeout = 5000;');
+    }
+  }
 }
+
+// Initial connection
+ensureDbConnected();
 
 // Translate PostgreSQL parameters ($1, $2...) to SQLite (?)
 function translateSql(sql: string): string {
@@ -37,6 +49,7 @@ export interface QueryResult {
 }
 
 export async function query(sql: string, params: any[] = []): Promise<QueryResult> {
+  ensureDbConnected();
   const translated = translateSql(sql);
 
   if (isPg && pgPool) {
@@ -76,6 +89,7 @@ export async function query(sql: string, params: any[] = []): Promise<QueryResul
 
 // Auto-run schema creations
 export async function initializeDatabase() {
+  ensureDbConnected();
   console.log('Initializing database schema...');
   
   const createUsersTable = isPg
@@ -255,17 +269,25 @@ export async function initializeDatabase() {
       )`;
 
   try {
+    logger.info('DB Init: Creating users table...');
     await query(createUsersTable);
+    logger.info('DB Init: Creating projects table...');
     await query(createProjectsTable);
+    logger.info('DB Init: Creating file_nodes table...');
     await query(createFileNodesTable);
+    logger.info('DB Init: Creating file_embeddings table...');
     await query(createFileEmbeddingsTable);
+    logger.info('DB Init: Creating bug_reports table...');
     await query(createBugReportsTable);
+    logger.info('DB Init: Creating vulnerabilities table...');
     await query(createVulnerabilitiesTable);
+    logger.info('DB Init: Creating documents table...');
     await query(createDocumentsTable);
+    logger.info('DB Init: Creating team_members table...');
     await query(createTeamMembersTable);
 
     // Safe Column Migrations check for projects table
-    console.log('Database: Checking and running column migrations...');
+    logger.info('Database: Checking and running column migrations...');
     const targetCols = [
       'executive_summary',
       'insights',
@@ -285,7 +307,7 @@ export async function initializeDatabase() {
       const existing = colCheck.rows.map(r => r.column_name.toLowerCase());
       for (const col of targetCols) {
         if (!existing.includes(col.toLowerCase())) {
-          console.log(`Migration: Altering projects table - Adding ${col} column`);
+          logger.info(`Migration: Altering projects table - Adding ${col} column`);
           await query(`ALTER TABLE projects ADD COLUMN ${col} TEXT`);
         }
       }
@@ -294,14 +316,28 @@ export async function initializeDatabase() {
       const existing = colCheck.rows.map(r => r.name.toLowerCase());
       for (const col of targetCols) {
         if (!existing.includes(col.toLowerCase())) {
-          console.log(`Migration: Altering projects table - Adding ${col} column`);
+          logger.info(`Migration: Altering projects table - Adding ${col} column`);
           await query(`ALTER TABLE projects ADD COLUMN ${col} TEXT`);
         }
       }
     }
 
-    console.log('Database initialized successfully.');
+    logger.info('Database initialized successfully.');
   } catch (error) {
-    console.error('Failed to initialize database schema:', error);
+    logger.error('Failed to initialize database schema:', error);
+  }
+}
+
+export async function closeDatabase(): Promise<void> {
+  if (pgPool) {
+    await pgPool.end();
+  }
+  if (sqliteDb) {
+    return new Promise((resolve) => {
+      sqliteDb!.close((err) => {
+        sqliteDb = null;
+        resolve();
+      });
+    });
   }
 }

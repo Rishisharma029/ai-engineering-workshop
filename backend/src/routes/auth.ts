@@ -5,7 +5,7 @@ import { query } from '../config/db.js';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'workspace-developer-jwt-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 // Ensure a default user exists for immediate workspace login
 export async function seedDefaultUser() {

@@ -96,9 +96,15 @@ export async function chatCompletionStream(
   projectContext?: string
 ): Promise<Readable> {
   if (isMock) {
+    let interval: NodeJS.Timeout;
+
     // Create an artificial stream that prints text chunk by chunk
     const readable = new Readable({
-      read() {}
+      read() {},
+      destroy(err, callback) {
+        clearInterval(interval);
+        callback(err);
+      }
     });
 
     const mockResponse = getMockChatResponse(messages, projectContext);
@@ -107,7 +113,7 @@ export async function chatCompletionStream(
     const words = mockResponse.split(/(\s+)/);
     let index = 0;
 
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       if (index >= words.length) {
         readable.push(null); // End stream
         clearInterval(interval);
@@ -125,6 +131,10 @@ export async function chatCompletionStream(
         index++;
       }
     }, 15); // Emulates typing effect
+
+    if (interval.unref) {
+      interval.unref();
+    }
 
     return readable;
   }

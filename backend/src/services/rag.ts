@@ -20,9 +20,10 @@ export function chunkFileContent(content: string, maxChunkSize: number = 1000, o
     if (end > content.length) {
       end = content.length;
     } else {
-      // Find a clean newline or space separator to split on
-      const nextSpace = content.indexOf('\n', end - 50);
-      if (nextSpace !== -1 && nextSpace < end + 50) {
+      // Find a clean newline or space separator to split on, searching from index
+      const searchStart = Math.max(index, end - 50);
+      const nextSpace = content.indexOf('\n', searchStart);
+      if (nextSpace !== -1 && nextSpace < end + 50 && nextSpace > index) {
         end = nextSpace + 1;
       }
     }
@@ -32,9 +33,11 @@ export function chunkFileContent(content: string, maxChunkSize: number = 1000, o
     if (end === content.length) {
       break;
     }
-    index = end - overlap;
-    if (index >= content.length) {
-      break;
+    const nextIndex = end - overlap;
+    if (nextIndex <= index) {
+      index = end; // Force advance if overlap would cause infinite loop or regression
+    } else {
+      index = nextIndex;
     }
   }
 

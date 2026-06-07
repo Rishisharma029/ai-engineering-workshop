@@ -4,8 +4,12 @@ node_modules/
 # Local databases & wildcards
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
 backend/workspace.db
 backend/workspace.db-journal
+backend/workspace.db-shm
+backend/workspace.db-wal
 
 # Secrets configuration
 .env

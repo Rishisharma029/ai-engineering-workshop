@@ -106,6 +106,10 @@ Always answer using professional engineering details. If code changes are propos
         res.write(chunk);
       });
 
+      aiRes.stream.on('end', () => {
+        res.end();
+      });
+
       aiRes.stream.on('error', (err) => {
         console.error('SSE Stream Error:', err);
         res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: '\n[Stream Error encountered]' } }] })}\n\n`);

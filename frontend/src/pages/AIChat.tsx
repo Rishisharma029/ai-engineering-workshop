@@ -502,5 +502,15 @@ function getClientMockResponse(text: string, projectName: string): string {
     return `### Static Scanning Code Observations 🐛\n\n- **Hardcoded Secret Alert**: Potential configuration keys detected in code files.\n- **Nested Array Loops**: Large computational blocks found in the SVG graphing helpers.\n- **Error Handlers**: Express routers lack complete try-catch boundaries on network exceptions.`;
   }
   
-  return `### AI Engineering Workshop Assistant 🤖\n\nI processed your request: *"${text}"*.\n\nSince this is the static demo preview mode, I am serving a simulated developer response. If you run the workshop backend locally and provide your API keys in the backend \`.env\` file, I will scan your files and utilize **Retrieval-Augmented Generation (RAG)** to provide live responses!`;
+  return `### AI Engineering Workshop Assistant 🤖
+  
+I have scanned the project repository **${projectName}**. Here is a general overview of this workspace configuration:
+
+1. **Frontend Architecture**: Renders AST complexity reports, dependency import topologies, security indicators, and coaching tools.
+2. **Backend Services**: Handles repository uploads, parses import structures, matches RAG codebase chunks, and dispatches LLM streams.
+3. **Database Layer**: Integrates SQLite3 for local persistence and PostgreSQL for multi-user deployments.
+
+How can I help you understand this project? We can discuss its architecture, security hotspots, or interview prep viva topics!
+
+*(Note: Running in offline static demo mode. Connect to a local server to run live codebase queries.)*`;
 }

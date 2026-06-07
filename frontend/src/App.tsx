@@ -167,6 +167,16 @@ export default function App() {
   }, [token]);
 
   const fetchUserProfile = async () => {
+    if (token === 'mock-preview-token') {
+      setUser({
+        id: 1,
+        email: 'rishi.sharma@example.com',
+        name: 'Rishi Sharma',
+        role: 'LEAD',
+        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
+      });
+      return;
+    }
     try {
       const response = await fetch('/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -189,6 +199,89 @@ export default function App() {
   };
 
   const fetchProjects = async () => {
+    if (token === 'mock-preview-token') {
+      console.log('Static preview mode active, loading demo project.');
+      const fallbackProject = {
+        id: 1,
+        name: 'AI Engineering Workshop',
+        description: 'A production-ready developer intelligence platform and AI Engineering Workshop',
+        type: 'GITHUB',
+        repo_url: 'https://github.com/Rishisharma029/ai-engineering-workshop',
+        tech_stack: ['React', 'Node.js', 'PostgreSQL', 'Express', 'TypeScript'],
+        metrics: {
+          security: 82,
+          documentation: 76,
+          testCoverage: 65,
+          maintainability: 89,
+          performance: 78,
+          overall: 78
+        },
+        folder_structure: {
+          name: 'Root',
+          path: '',
+          type: 'directory',
+          size: 154200,
+          children: [
+            { name: 'backend', path: 'backend', type: 'directory', size: 48000, children: [
+              { name: 'src', path: 'backend/src', type: 'directory', size: 38000, children: [
+                { name: 'server.ts', path: 'backend/src/server.ts', type: 'file', size: 2376, language: 'TypeScript' },
+                { name: 'config', path: 'backend/src/config', type: 'directory', size: 10500, children: [
+                  { name: 'db.ts', path: 'backend/src/config/db.ts', type: 'file', size: 9590, language: 'TypeScript' }
+                ]}
+              ]}
+            ]},
+            { name: 'frontend', path: 'frontend', type: 'directory', size: 94000, children: [
+              { name: 'src', path: 'frontend/src', type: 'directory', size: 84000, children: [
+                { name: 'App.tsx', path: 'frontend/src/App.tsx', type: 'file', size: 54644, language: 'TypeScript' },
+                { name: 'pages', path: 'frontend/src/pages', type: 'directory', size: 28000, children: [
+                  { name: 'Dashboard.tsx', path: 'frontend/src/pages/Dashboard.tsx', type: 'file', size: 65429, language: 'TypeScript' },
+                  { name: 'Resume.tsx', path: 'frontend/src/pages/Resume.tsx', type: 'file', size: 25600, language: 'TypeScript' }
+                ]}
+              ]}
+            ]},
+            { name: 'README.md', path: 'README.md', type: 'file', size: 4297, language: 'Markdown' }
+          ]
+        },
+        executive_summary: {
+          overview: 'The AI Engineering Workshop is a decoupled React and Node/Express platform designed to index repositories, parse file structures, draw topology networks, and prepare engineering packages.',
+          purpose: 'Serve as an automated code intelligence dashboard and portfolio accelerator.',
+          architecture: 'Layered client-server MVC using SQLite/PostgreSQL adapters and Google Gemini AI client.',
+          technologies: ['React', 'Express', 'TypeScript', 'Docker', 'Vite'],
+          strengths: ['Robust static analyzer', 'Zoomable SVG dependency maps', 'Automated interview coach'],
+          risks: ['Strict local database fallbacks', 'Lack of rate-limiting on custom AI uploads']
+        },
+        insights: {
+          complexFiles: [{ path: 'frontend/src/App.tsx', complexity: 82, risk: 40 }],
+          riskyFiles: [{ path: 'backend/src/config/db.ts', complexity: 72, risk: 35 }],
+          bottlenecks: [{ file: 'frontend/src/pages/Dashboard.tsx', desc: 'Large DOM render tree with multiple nested SVG nodes.' }],
+          deadCode: [{ file: 'frontend/src/components/Sidebar.tsx', desc: 'Legacy unused route buttons.' }]
+        },
+        heatmap: [
+          { path: 'frontend/src/App.tsx', risk: 40, complexity: 82, security: 95, maintainability: 80, performance: 85, documentation: 90, testing: 70 },
+          { path: 'backend/src/config/db.ts', risk: 35, complexity: 72, security: 90, maintainability: 85, performance: 80, documentation: 60, testing: 50 },
+          { path: 'frontend/src/pages/Dashboard.tsx', risk: 50, complexity: 90, security: 98, maintainability: 75, performance: 65, documentation: 85, testing: 60 }
+        ],
+        interview_prep: [
+          { question: 'Describe the dual-database setup implemented in this repository.', expected: 'Uses a conditional process.env check to initialize either PostgreSQL or SQLite3 driver pools dynamically.', category: 'Architecture', difficulty: 'Medium' },
+          { question: 'How is the visual dependency tree rendered without third-party canvas libraries?', expected: 'Constructs dynamic SVG nodes and edges, using simple force-directed coordinate math calculations.', category: 'Viva', difficulty: 'Hard' }
+        ],
+        resume_data: {
+          points: [
+            'Designed a dual-persistence database driver in Node.js/TypeScript that auto-detects cloud PG endpoints with local SQLite fallback.',
+            'Created custom SVG dependency topology visuals supporting pan-and-zoom actions, increasing frontend rendering efficiency.'
+          ],
+          linkedin: 'Fullstack Engineer focused on AI Developer Tooling and Cloud Deployments',
+          talkingPoints: [
+            'Offline-first fallback capabilities',
+            'SVG coordinate mapping logic',
+            'TypeScript compilation gates setup'
+          ]
+        }
+      };
+      setProjects([fallbackProject]);
+      setActiveProject(fallbackProject);
+      return;
+    }
     try {
       const response = await fetch('/api/projects', {
         headers: { 'Authorization': `Bearer ${token}` }

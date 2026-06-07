@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { initializeDatabase } from './config/db.js';
 import { requestLogger, logger } from './middleware/logger.js';
+import { helmetMiddleware, generalLimiter, authLimiter, aiLimiter, sanitizeInputs } from './middleware/security.js';
 
 // Load environmental variables
 dotenv.config();
@@ -10,6 +11,11 @@ dotenv.config();
 // Initialize express app
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Security HTTP Headers & Rate Limiting
+app.use(helmetMiddleware);
+app.use(generalLimiter);
+app.use(sanitizeInputs);
 
 // Middleware configurations
 app.use(cors({
@@ -36,12 +42,12 @@ import resumeRouter from './routes/resume.js';
 import searchRouter from './routes/search.js';
 import apiAliasRouter from './routes/apiAlias.js';
 
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/projects', searchRouter);
 app.use('/api/analysis', analysisRouter);
-app.use('/api/chat', chatRouter);
-app.use('/api/docs', docsRouter);
+app.use('/api/chat', aiLimiter, chatRouter);
+app.use('/api/docs', aiLimiter, docsRouter);
 app.use('/api/tests', testsRouter);
 app.use('/api/refactor', refactorRouter);
 app.use('/api/visualize', visualizeRouter);

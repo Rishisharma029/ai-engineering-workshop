@@ -489,9 +489,15 @@ export default function AIChat({
 // Client-side mock response generator for static demo preview mode
 function getClientMockResponse(text: string, projectName: string): string {
   const query = text.toLowerCase().trim();
+  const words = query.split(/\W+/);
   
   const matches = (keywords: string[]) => {
-    return keywords.some(k => query.includes(k));
+    return keywords.some(k => {
+      if (k.length <= 3) {
+        return words.includes(k);
+      }
+      return query.includes(k);
+    });
   };
 
   if (matches(['hi', 'hello', 'hey', 'greet', 'how are you'])) {

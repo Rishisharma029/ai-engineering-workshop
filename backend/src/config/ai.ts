@@ -1,8 +1,11 @@
 import { Readable } from 'stream';
 import dotenv from 'dotenv';
 
-// Ensure env variables are loaded before evaluation
-dotenv.config();
+// Ensure env variables are loaded before evaluation (skip in tests for isolation)
+if (process.env.NODE_ENV !== 'test') {
+  dotenv.config();
+}
+
 
 const openAIKey = process.env.OPENAI_API_KEY;
 const apiKey = openAIKey;

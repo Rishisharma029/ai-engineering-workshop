@@ -1,8 +1,34 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { isMockMode, generateEmbedding, chatCompletion, chatCompletionStream } from '../ai.js';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { Readable } from 'stream';
 
 describe('AI Config & Helpers', () => {
+  let isMockMode: any;
+  let generateEmbedding: any;
+  let chatCompletion: any;
+  let chatCompletionStream: any;
+  let originalOpenAIKey: any;
+  let originalGeminiKey: any;
+
+  beforeEach(async () => {
+    originalOpenAIKey = process.env.OPENAI_API_KEY;
+    originalGeminiKey = process.env.GEMINI_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    
+    vi.resetModules();
+    const aiModule = await import('../ai.js');
+    isMockMode = aiModule.isMockMode;
+    generateEmbedding = aiModule.generateEmbedding;
+    chatCompletion = aiModule.chatCompletion;
+    chatCompletionStream = aiModule.chatCompletionStream;
+  });
+
+  afterEach(() => {
+    process.env.OPENAI_API_KEY = originalOpenAIKey;
+    process.env.GEMINI_API_KEY = originalGeminiKey;
+    vi.resetModules();
+  });
+
   it('should run in mock mode by default when API key is missing', () => {
     expect(isMockMode()).toBe(true);
   });
@@ -27,6 +53,7 @@ describe('AI Config & Helpers', () => {
     stream.destroy();
   });
 });
+
 
 describe('AI Config Real Mode Integration', () => {
   const originalFetch = global.fetch;

@@ -1,5 +1,7 @@
 # AI Engineering Workshop (v1.0.0)
 
+🚀 **Live Interactive Demo:** [https://rishisharma029.github.io/ai-engineering-workshop/](https://rishisharma029.github.io/ai-engineering-workshop/)
+
 ![Version](https://img.shields.io/badge/version-v1.0.0-orange)
 ![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
 ![React](https://img.shields.io/badge/react-v19-61dafb?logo=react)

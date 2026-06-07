@@ -118,9 +118,16 @@ async function callProviderAPI(
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
 
+    let targetModel = model;
+    if (model === 'gemini-2.5-pro') {
+      targetModel = 'gemini-1.5-pro';
+    } else if (model === 'gemini-2.5-flash') {
+      targetModel = 'gemini-1.5-flash';
+    }
+
     const action = stream ? 'streamGenerateContent' : 'generateContent';
     const queryParams = stream ? '?alt=sse' : '';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}${queryParams}&key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:${action}${queryParams}&key=${apiKey}`;
 
     const body = {
       contents: formatGeminiContents(messages),
@@ -249,7 +256,15 @@ export async function executeAICompletion(
   if (provider.startsWith('gemini')) {
     // If Gemini selected: try chosen provider -> try alternate gemini tier -> try Claude -> try OpenAI
     const fallbackGemini = provider === 'gemini-2.5-flash' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
-    modelsToTry = [provider, fallbackGemini, 'claude-sonnet', 'gpt-4o'];
+    modelsToTry = [
+      provider,
+      fallbackGemini,
+      'gemini-1.5-pro',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'claude-sonnet',
+      'gpt-4o'
+    ];
   } else if (provider === 'claude-sonnet') {
     modelsToTry = ['claude-sonnet', 'gpt-4o'];
   } else {

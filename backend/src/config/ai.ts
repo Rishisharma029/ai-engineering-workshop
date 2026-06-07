@@ -1,9 +1,11 @@
 import { Readable } from 'stream';
 
-const apiKey = process.env.OPENAI_API_KEY;
-const isMock = !apiKey;
+const openAIKey = process.env.OPENAI_API_KEY;
+const apiKey = openAIKey;
+const geminiKey = process.env.GEMINI_API_KEY;
+const isMock = !openAIKey && !geminiKey;
 
-console.log(isMock ? 'AI Service: Running in MOCK mode (No API Key)' : 'AI Service: Running in REAL mode (OpenAI API)');
+console.log(isMock ? 'AI Service: Running in MOCK mode (No API Key)' : `AI Service: Running in REAL mode (OpenAI: ${!!openAIKey}, Gemini: ${!!geminiKey})`);
 
 export function isMockMode(): boolean {
   return isMock;
@@ -11,44 +13,80 @@ export function isMockMode(): boolean {
 
 // Generate text embeddings
 export async function generateEmbedding(text: string): Promise<number[]> {
-  if (isMock) {
-    // Generate a simple, deterministic pseudo-embedding vector based on string hash
-    let hash = 0;
-    for (let i = 0; i < text.length; i++) {
-      hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  const openAIKey = process.env.OPENAI_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
+
+  if (openAIKey) {
+    try {
+      const response = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openAIKey}`
+        },
+        body: JSON.stringify({
+          input: text,
+          model: 'text-embedding-3-small'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data[0].embedding;
+    } catch (error) {
+      console.error('Failed to fetch OpenAI embedding, falling back:', error);
     }
-    const vector: number[] = [];
-    for (let j = 0; j < 1536; j++) {
-      // Create a value between -1 and 1
-      const seed = Math.sin(hash + j) * 10000;
-      vector.push(seed - Math.floor(seed) * 2 - 1);
-    }
-    return vector;
   }
 
-  try {
-    const response = await fetch('https://api.openai.com/v1/embeddings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        input: text,
-        model: 'text-embedding-3-small'
-      })
-    });
+  if (geminiKey) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'models/text-embedding-004',
+          content: {
+            parts: [{ text }]
+          }
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Gemini Embedding API error: ${response.statusText}`);
+      }
+
+      const data: any = await response.json();
+      const values = data.embedding?.values;
+      if (values && Array.isArray(values)) {
+        if (values.length === 768) {
+          // Pad to 1536 to keep dimension sizes consistent
+          return [...values, ...new Array(768).fill(0)];
+        }
+        return values;
+      }
+      throw new Error('Invalid response format from Gemini Embedding API');
+    } catch (error) {
+      console.error('Failed to fetch Gemini embedding, falling back:', error);
     }
-
-    const data = await response.json();
-    return data.data[0].embedding;
-  } catch (error) {
-    console.error('Failed to fetch OpenAI embedding, returning dummy vector:', error);
-    return new Array(1536).fill(0).map(() => Math.random() * 2 - 1);
   }
+
+  // Fallback mock mode
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const vector: number[] = [];
+  for (let j = 0; j < 1536; j++) {
+    // Create a value between -1 and 1
+    const seed = Math.sin(hash + j) * 10000;
+    vector.push(seed - Math.floor(seed) * 2 - 1);
+  }
+  return vector;
 }
 
 // Single-run completion

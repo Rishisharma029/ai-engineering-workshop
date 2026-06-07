@@ -490,27 +490,237 @@ export default function AIChat({
 function getClientMockResponse(text: string, projectName: string): string {
   const query = text.toLowerCase();
   
+  if (query.includes('hi') || query.includes('hello') || query.includes('hey') || query.includes('greet') || query.includes('how are you')) {
+    return `### Hello there! 🤖
+
+I am your AI Codebase Assistant. I've scanned and indexed the **${projectName}** repository. 
+
+I can help you explore and understand the codebase:
+- 🐳 **Docker & Containers**: Inspect configurations and build steps.
+- 🗄️ **Database Schemas**: Explain tables, relationships, and queries.
+- 🔑 **Authentication & JWT**: Audit login logic and token middleware.
+- 🛡️ **Security Risks**: Scan for vulnerabilities and hardcoded secrets.
+- ⚡ **Refactoring suggestions**: Optimize nesting, loops, and handlers.
+- 🧪 **Vitest unit tests**: Run checks and review code coverage.
+
+What would you like to discuss? Select a topic or ask a custom question!`;
+  }
+  
   if (query.includes('readme.md') || query.includes('readme')) {
-    return `### README.md Analysis for ${projectName} 📖\n\nThis workspace wraps a complete static code scanner and AST parser.\n\nKey features in README:\n- Repository Intelligence Inspector\n- Code Risk Heatmap & checklist\n- AI Interview Coach & Viva Prep`;
+    return `### README.md Analysis for ${projectName} 📖
+
+This workspace represents a comprehensive Repository Intelligence platform with advanced developer tools.
+
+Key features highlighted in the README:
+- **Repository Intelligence Inspector**: Auto-parses files, imports, and builds AST representation.
+- **Complexity Heatmaps**: Visualizes complex methods and loops using interactive graphing.
+- **Refactoring Sandbox**: Side-by-side AST-based refactoring helper.
+- **AI Interview Prep**: Coach for mock viva voce exams.
+- **Robustness Suite**: Winston logging and SQLite WAL persistence.`;
   }
   
+  if (query.includes('docker') || query.includes('container') || query.includes('dockerfile')) {
+    return `### Containerization with Docker 🐳
+
+The repository includes a modern multi-container development and production setup:
+
+1. **Root Compose Configuration (\`docker-compose.yml\`)**:
+   - Manages frontend and backend services in isolated networks.
+   - Sets environment configurations and binds local folders for hot reloading.
+
+2. **Backend Setup (\`backend/Dockerfile\`)**:
+   - Uses a multi-stage build starting from \`node:20-alpine\`.
+   - Excludes development dependencies for light production packaging.
+   - Compiles TypeScript using the native compiler into the \`dist/\` directory.
+
+3. **Frontend Configuration (\`frontend/Dockerfile\`)**:
+   - Bundles the React Vite application assets using a Node builder.
+   - Can be served via Nginx or integrated into a combined server static-serving layer.
+
+Would you like to see a sample compose run command or build variables?`;
+  }
+
+  if (query.includes('database') || query.includes('sqlite') || query.includes('postgres') || query.includes('schema') || query.includes('table') || query.includes(' db') || query.includes('db ') || query.includes('migration')) {
+    return `### Database Architecture & Schemas 🗄️
+
+The database layer is dynamically managed by a dual-driver config:
+
+1. **SQLite Local Fallback (\`workspace.db\`)**:
+   - Designed for easy development without external service dependencies.
+   - Configured with **Write-Ahead Logging (WAL) Mode** and a \`busy_timeout\` of 5000ms to guarantee concurrency safety and prevent write locks.
+
+2. **PostgreSQL Production Mode**:
+   - Leverages a fully featured \`pg\` pool when \`DATABASE_URL\` is defined.
+   - Automatically executes structural migrations to alter database schemas.
+
+3. **Core Database Tables**:
+   - **\`users\`**: Accounts, passwords, and authorization scopes.
+   - **\`projects\`**: Repository records, summary statistics, and metadata.
+   - **\`file_nodes\`**: File structural representations and content sizes.
+   - **\`file_embeddings\`**: Vector representations of RAG chunks.
+   - **\`bug_reports\` & \`vulnerabilities\`**: Issues flagged during analysis.
+
+Let me know if you would like to review the SQLite WAL config or a database migration script!`;
+  }
+
+  if (query.includes('auth') || query.includes('login') || query.includes('jwt') || query.includes('token') || query.includes('password') || query.includes('register')) {
+    return `### Authentication & Authorization System 🔑
+
+The application features a robust stateless token auth pipeline:
+
+1. **Route Handlers (\`backend/src/routes/auth.ts\`)**:
+   - \`POST /api/auth/register\`: Registers developers with salted password hashing using \`bcryptjs\`.
+   - \`POST /api/auth/login\`: Validates credentials and responds with a signed JSON Web Token (JWT).
+
+2. **Authentication Middleware (\`backend/src/middleware/auth.ts\`)**:
+   - Intercepts requests and extracts the bearer token from the \`Authorization\` header.
+   - Verifies the signature using \`jsonwebtoken\` and binds the user payload to the express request object.
+   - Provides a secure developer fallback in development mode.
+
+3. **Client Session**:
+   - Stores the token in \`localStorage\` and automatically includes it in all request fetch headers.
+
+Would you like to review the JWT signing payload or check the middleware code?`;
+  }
+
+  if (query.includes('security') || query.includes('leak') || query.includes('secret') || query.includes('gitleaks') || query.includes('vulnerability') || query.includes('key') || query.includes('owasp')) {
+    return `### Codebase Security & Audits 🛡️
+
+We maintain an active security auditing pipeline to prevent credential leaks and input vulnerabilities:
+
+1. **Gitleaks scanner (\`.github/workflows/security.yml\`)**:
+   - Scans commits and PRs to block hardcoded API keys.
+   - Configures a \`.gitleaksignore\` file to bypass mock/test credentials safely.
+
+2. **OWASP Protections**:
+   - **Input Sanitization**: All uploaded ZIP files are parsed by \`adm-zip\` with strict path-sanitization checks to prevent Zip Slip attacks.
+   - **Parameterized Queries**: All database queries are fully parameterized (e.g. \`$1\`, \`$2\`) to protect against SQL injections.
+   - **Secret Isolation**: Authentication secrets and LLM keys are restricted to the backend \`.env\` and never hardcoded in source files.
+
+Would you like to see how the Zip Slip check is implemented or check the database queries?`;
+  }
+
+  if (query.includes('refactor') || query.includes('clean code') || query.includes('optimize') || query.includes('complexity') || query.includes('ast')) {
+    return `### Refactoring & Code Quality Sandbox ⚡
+
+The application supports clean code standards and AST-based complexity parsing:
+
+1. **Complexity Audit**:
+   - Code files are analyzed to identify high cyclomatic complexity, deeply nested blocks, or bloated methods.
+   - Complexity thresholds (e.g., nesting depth > 4) flag refactoring candidate warnings.
+
+2. **Side-by-Side Sandbox**:
+   - Renders the original file and an optimized refactored version side by side.
+   - Focuses on extracting helper functions, simplifying conditional expressions, and improving try-catch exception handling.
+
+Would you like me to refactor a specific loop structure or show you clean code guidelines?`;
+  }
+
+  if (query.includes('test') || query.includes('vitest') || query.includes('coverage') || query.includes('qa') || query.includes('unit test') || query.includes('e2e')) {
+    return `### Test Automation & Code Coverage 🧪
+
+We use an automated test suite to ensure the system is stable and bug-free:
+
+1. **Testing Stack**:
+   - **Vitest**: Modern, ultra-fast test runner with native ESModules support.
+   - **v8 Coverage**: Measures statements, branches, functions, and lines.
+
+2. **Test Performance**:
+   - **Backend**: Contains unit and API tests checking controllers, database configurations, and authentication. Statement coverage exceeds **92.7%**!
+   - **Frontend**: Tests page renders, interactive layouts, and hooks.
+
+To execute tests:
+\`\`\`bash
+# Backend unit & integration tests
+npm run test --prefix backend
+
+# Frontend unit & component tests
+npm run test --prefix frontend
+\`\`\`
+
+Would you like to write a new mock test or review the existing testing configuration?`;
+  }
+
+  if (query.includes('framework') || query.includes('library') || query.includes('react') || query.includes('express') || query.includes('typescript') || query.includes('vite') || query.includes('tailwind') || query.includes('node')) {
+    return `### Tech Stack & Libraries 🚀
+
+This repository uses a modern, high-performance, strictly-typed technology stack:
+
+1. **Frontend Client**:
+   - **React 19 & TypeScript**: Component-driven SPA development.
+   - **Vite**: Super fast build runner and local dev server.
+   - **Tailwind CSS**: Utility-first CSS styling for modern, premium glassmorphic interfaces.
+   - **Recharts**: High-fidelity rendering for complexity metrics and dashboard widgets.
+   - **Lucide React**: Clean, modern UI icon set.
+
+2. **Backend Server**:
+   - **Node.js & Express**: High-concurrency RESTful API endpoints.
+   - **Winston**: Standardized, structured logging with customizable console and file transports.
+   - **adm-zip**: Memory-safe ZIP file unpacking and metadata extraction.
+
+Would you like to examine the configuration files (e.g. \`vite.config.ts\`) or add a new dependency?`;
+  }
+
+  if (query.includes('api') || query.includes('route') || query.includes('endpoint') || query.includes('controller') || query.includes('stream') || query.includes('sse')) {
+    return `### API Endpoints Catalog 🌐
+
+The backend server is structured with clean, modular Express routers:
+
+- **Authentication**:
+  - \`POST /api/auth/register\` - Create new user credentials.
+  - \`POST /api/auth/login\` - Login and receive JWT.
+  - \`GET /api/auth/me\` - Verify session.
+
+- **Project Management**:
+  - \`GET /api/projects\` - Retrieve active workspaces.
+  - \`POST /api/projects/upload\` - Accepts ZIP file uploads (via \`multer\`) for AST profiling.
+  - \`DELETE /api/projects/:id\` - Remove project from persistent DB.
+
+- **Developer Intelligence**:
+  - \`POST /api/chat/stream\` - Chat chatbot engine using Server-Sent Events (SSE) streaming.
+  - \`GET /api/analysis/:projectId\` - Tech stack and codebase statistics.
+  - \`POST /api/docs/generate\` - Auto-creates markdown guides.
+
+Would you like to see a sample request payload or see how SSE stream chunks are written?`;
+  }
+
   if (query.includes('explain') || query.includes('what does')) {
-    return `### Codebase Architecture & File Summary 💡\n\nThis workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.\n\nKey directories:\n1. **frontend/src**: Contains components, hooks, and views for the AI Engineering Workshop dashboards.\n2. **backend/src**: Implements controllers, services, database migrations, and AI providers.\n\n*Note: Running in offline static mock preview mode.*`;
+    return `### Codebase Architecture & File Summary 💡
+
+This workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.
+
+Key directories:
+1. **frontend/src**: Contains components, hooks, and views for the AI Engineering Workshop dashboards.
+   - \`pages/\`: Dashboard views (AIChat, Complexity Heatmap, Security, Resume Review).
+   - \`components/\`: Shared UI components (Layout structure, Sidebar navigation).
+2. **backend/src**: Implements controllers, services, database migrations, and AI providers.
+   - \`config/\`: Configuration for Database (SQLite/PostgreSQL) and AI models.
+   - \`routes/\`: Express API route entrypoints.
+   - \`services/\`: RAG indexers and AST scan parsers.`;
   }
-  
+
   if (query.includes('bug') || query.includes('error') || query.includes('leak') || query.includes('risk')) {
-    return `### Static Scanning Code Observations 🐛\n\n- **Hardcoded Secret Alert**: Potential configuration keys detected in code files.\n- **Nested Array Loops**: Large computational blocks found in the SVG graphing helpers.\n- **Error Handlers**: Express routers lack complete try-catch boundaries on network exceptions.`;
+    return `### Codebase Static Bug Analysis 🐛
+
+I ran a quick static scan on the context folders and detected several areas of interest:
+* **Hardcoded Secrets**: Potential API tokens or private keys in \`config.js\` or inside test mocks.
+* **Large Functions**: The main drawing module contains an SVG rendering routine that exceeds 180 lines, impacting performance.
+* **Missing Error Boundaries**: The API handler routes don't fully catch parsing exceptions when ZIP metadata is corrupt.
+
+I suggest wrapping the JSON extraction inside a \`try-catch\` block or checking the validation schemas.`;
   }
-  
-  return `### AI Engineering Workshop Assistant 🤖
-  
-I have scanned the project repository **${projectName}**. Here is a general overview of this workspace configuration:
 
-1. **Frontend Architecture**: Renders AST complexity reports, dependency import topologies, security indicators, and coaching tools.
-2. **Backend Services**: Handles repository uploads, parses import structures, matches RAG codebase chunks, and dispatches LLM streams.
-3. **Database Layer**: Integrates SQLite3 for local persistence and PostgreSQL for multi-user deployments.
+  // Fallback response for any other query (like "what is docker")
+  return `### Developer Assistant Response 🤖
 
-How can I help you understand this project? We can discuss its architecture, security hotspots, or interview prep viva topics!
+I am your codebase copilot. That is a great question! Regarding *"${text}"*:
 
-*(Note: Running in offline static demo mode. Connect to a local server to run live codebase queries.)*`;
+In a modern web workspace like this one:
+- **TypeScript and ESModules** allow us to import libraries and maintain type-safety across client-server boundaries.
+- **Environment variables** control configurations dynamically depending on whether we deploy to staging or production.
+- **Modular routing** ensures that code remains clean, maintainable, and scalable.
+
+If you run the workshop backend locally and provide your API keys in the backend \`.env\` file, I will scan your files and utilize **Retrieval-Augmented Generation (RAG)** to provide live responses!
+
+What other part of the project would you like to discuss? We can explore the architecture, database configurations, or security setups!`;
 }

@@ -77,6 +77,35 @@ export default function AIChat({
 
     try {
       const token = localStorage.getItem('token');
+
+      if (token === 'mock-preview-token') {
+        const mockResponse = getClientMockResponse(text, activeProject.name);
+        const words = mockResponse.split(/(\s+)/);
+        let tempContent = '';
+        
+        onSetProviderMetrics({
+          tokens: Math.floor(mockResponse.length / 4) + 120,
+          latency: 650,
+          cost: 0.0,
+          provider: 'Local Static Mock'
+        });
+
+        for (let i = 0; i < words.length; i++) {
+          await new Promise(r => setTimeout(r, 15));
+          tempContent += words[i];
+          setStreamingMessage(tempContent);
+        }
+
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: mockResponse,
+          references: ['README.md', 'frontend/src/App.tsx']
+        }]);
+        setStreamingMessage('');
+        setStreamingReferences([]);
+        return;
+      }
+
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: {
@@ -426,4 +455,23 @@ export default function AIChat({
       </div>
     </div>
   );
+}
+
+// Client-side mock response generator for static demo preview mode
+function getClientMockResponse(text: string, projectName: string): string {
+  const query = text.toLowerCase();
+  
+  if (query.includes('readme.md') || query.includes('readme')) {
+    return `### README.md Analysis for ${projectName} 📖\n\nThis workspace wraps a complete static code scanner and AST parser.\n\nKey features in README:\n- Repository Intelligence Inspector\n- Code Risk Heatmap & checklist\n- AI Interview Coach & Viva Prep`;
+  }
+  
+  if (query.includes('explain') || query.includes('what does')) {
+    return `### Codebase Architecture & File Summary 💡\n\nThis workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.\n\nKey directories:\n1. **frontend/src**: Contains components, hooks, and views for the AI Engineering Workshop dashboards.\n2. **backend/src**: Implements controllers, services, database migrations, and AI providers.\n\n*Note: Running in offline static mock preview mode.*`;
+  }
+  
+  if (query.includes('bug') || query.includes('error') || query.includes('leak') || query.includes('risk')) {
+    return `### Static Scanning Code Observations 🐛\n\n- **Hardcoded Secret Alert**: Potential configuration keys detected in code files.\n- **Nested Array Loops**: Large computational blocks found in the SVG graphing helpers.\n- **Error Handlers**: Express routers lack complete try-catch boundaries on network exceptions.`;
+  }
+  
+  return `### AI Engineering Workshop Assistant 🤖\n\nI processed your request: *"${text}"*.\n\nSince this is the static demo preview mode, I am serving a simulated developer response. If you run the workshop backend locally and provide your API keys in the backend \`.env\` file, I will scan your files and utilize **Retrieval-Augmented Generation (RAG)** to provide live responses!`;
 }

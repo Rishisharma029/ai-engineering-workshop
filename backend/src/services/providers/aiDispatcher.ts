@@ -247,8 +247,9 @@ export async function executeAICompletion(
   // Execution pipeline for fallback
   let modelsToTry = [provider];
   if (provider.startsWith('gemini')) {
-    // If Gemini selected: try gemini -> retry gemini once -> try Claude -> try OpenAI
-    modelsToTry = [provider, provider, 'claude-sonnet', 'gpt-4o'];
+    // If Gemini selected: try chosen provider -> try alternate gemini tier -> try Claude -> try OpenAI
+    const fallbackGemini = provider === 'gemini-2.5-flash' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
+    modelsToTry = [provider, fallbackGemini, 'claude-sonnet', 'gpt-4o'];
   } else if (provider === 'claude-sonnet') {
     modelsToTry = ['claude-sonnet', 'gpt-4o'];
   } else {

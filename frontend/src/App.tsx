@@ -447,6 +447,68 @@ export default function App() {
       setUploadName('');
       setUploadDesc('');
     } catch (err) {
+      if (token === 'mock-preview-token') {
+        const newMockProject = {
+          id: Date.now(),
+          name: uploadName || selectedFile.name.replace('.zip', '') || 'Uploaded-Project',
+          description: uploadDesc || 'Simulated uploaded archive scanner metrics.',
+          type: 'ZIP',
+          tech_stack: ['TypeScript', 'React', 'Node.js'],
+          metrics: {
+            security: 75 + Math.floor(Math.random() * 20),
+            documentation: 70 + Math.floor(Math.random() * 25),
+            testCoverage: 55 + Math.floor(Math.random() * 35),
+            maintainability: 80 + Math.floor(Math.random() * 15),
+            performance: 75 + Math.floor(Math.random() * 20),
+            overall: 75 + Math.floor(Math.random() * 15)
+          },
+          folder_structure: {
+            name: 'Root',
+            path: '',
+            type: 'directory',
+            size: selectedFile.size || 50000,
+            children: [
+              { name: 'src', path: 'src', type: 'directory', size: 40000, children: [
+                { name: 'App.tsx', path: 'src/App.tsx', type: 'file', size: 15000, language: 'TypeScript' },
+                { name: 'index.css', path: 'src/index.css', type: 'file', size: 5000, language: 'CSS' }
+              ]},
+              { name: 'package.json', path: 'package.json', type: 'file', size: 1500, language: 'JSON' }
+            ]
+          },
+          executive_summary: {
+            overview: 'Simulated preview scan of uploaded project ZIP archive.',
+            purpose: 'Provide local AST audit reports and vulnerability indexes.',
+            architecture: 'Decoupled React client directory layout.',
+            technologies: ['React', 'TypeScript'],
+            strengths: ['Strict type definitions', 'Clean component separation'],
+            risks: ['Mock fallback database driver actively serving metrics']
+          },
+          insights: {
+            complexFiles: [{ path: 'src/App.tsx', complexity: 80, risk: 40 }],
+            riskyFiles: [],
+            bottlenecks: [],
+            deadCode: []
+          },
+          heatmap: [
+            { path: 'src/App.tsx', risk: 40, complexity: 80, security: 90, maintainability: 85, performance: 80, documentation: 75, testing: 70 }
+          ],
+          interview_prep: [
+            { question: 'Describe components hierarchy of this UI client.', expected: 'Structured under single container React tree.', category: 'Architecture', difficulty: 'Medium' }
+          ],
+          resume_data: {
+            points: ['Developed clean-architecture React application utilizing modular design patterns.'],
+            linkedin: 'Frontend developer focused on strict TypeScript UI components.',
+            talkingPoints: ['React SPA route configs', 'Component lifecycle hooks']
+          }
+        };
+        setProjects(prev => [newMockProject, ...prev]);
+        setActiveProject(newMockProject);
+        setUploadModalOpen(false);
+        setSelectedFile(null);
+        setUploadName('');
+        setUploadDesc('');
+        return;
+      }
       alert('Error uploading project ZIP. Please ensure backend is running.');
     } finally {
       setUploading(false);
@@ -483,6 +545,78 @@ export default function App() {
       setGitName('');
       setGitDesc('');
     } catch (err) {
+      if (token === 'mock-preview-token') {
+        const repoName = gitName || gitUrl.split('/').pop() || 'Imported-Project';
+        const newMockProject = {
+          id: Date.now(),
+          name: repoName,
+          description: gitDesc || 'Simulated imported repository scanner metrics.',
+          type: 'GITHUB',
+          repo_url: gitUrl,
+          tech_stack: ['TypeScript', 'JavaScript', 'Node.js', 'Vite'],
+          metrics: {
+            security: 70 + Math.floor(Math.random() * 25),
+            documentation: 60 + Math.floor(Math.random() * 30),
+            testCoverage: 40 + Math.floor(Math.random() * 50),
+            maintainability: 75 + Math.floor(Math.random() * 20),
+            performance: 80 + Math.floor(Math.random() * 15),
+            overall: 70 + Math.floor(Math.random() * 20)
+          },
+          folder_structure: {
+            name: 'Root',
+            path: '',
+            type: 'directory',
+            size: 12000,
+            children: [
+              { name: 'src', path: 'src', type: 'directory', size: 9000, children: [
+                { name: 'main.ts', path: 'src/main.ts', type: 'file', size: 4500, language: 'TypeScript' },
+                { name: 'index.js', path: 'src/index.js', type: 'file', size: 4500, language: 'JavaScript' }
+              ]},
+              { name: 'package.json', path: 'package.json', type: 'file', size: 1200, language: 'JSON' },
+              { name: 'README.md', path: 'README.md', type: 'file', size: 1800, language: 'Markdown' }
+            ]
+          },
+          executive_summary: {
+            overview: `Simulated preview scan of GitHub repository ${repoName}.`,
+            purpose: 'Provide structural analysis and CVSS rating reviews.',
+            architecture: 'Static codebase metrics summary layout.',
+            technologies: ['TypeScript', 'Node.js'],
+            strengths: ['Clean directory hierarchy', 'Well-defined package entries'],
+            risks: ['Mock fallback connection actively serving metrics']
+          },
+          insights: {
+            complexFiles: [{ path: 'src/main.ts', complexity: 75, risk: 45 }],
+            riskyFiles: [{ path: 'src/index.js', complexity: 55, risk: 80 }],
+            bottlenecks: [{ file: 'src/main.ts', desc: 'Direct logic functions nested statements.' }],
+            relatedFiles: [],
+            deadCode: []
+          },
+          heatmap: [
+            { path: 'src/main.ts', risk: 45, complexity: 75, security: 80, maintainability: 85, performance: 80, documentation: 70, testing: 60 },
+            { path: 'src/index.js', risk: 80, complexity: 55, security: 40, maintainability: 90, performance: 85, documentation: 65, testing: 40 }
+          ],
+          interview_prep: [
+            { question: 'Explain code optimizations for main.ts.', expected: 'Refactor nesting logic branches.', category: 'Architecture', difficulty: 'Medium' }
+          ],
+          resume_data: {
+            points: [
+              'Refactored JavaScript legacy methods to TypeScript modules, improving typing verification structures.'
+            ],
+            linkedin: 'Software Developer utilizing static scanner intelligence metrics.',
+            talkingPoints: [
+              'Migration paths from JS to TS',
+              'AST scanning configurations'
+            ]
+          }
+        };
+        setProjects(prev => [newMockProject, ...prev]);
+        setActiveProject(newMockProject);
+        setGithubModalOpen(false);
+        setGitUrl('');
+        setGitName('');
+        setGitDesc('');
+        return;
+      }
       alert('GitHub import failure. Please confirm backend details.');
     } finally {
       setImporting(false);

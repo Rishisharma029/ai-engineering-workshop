@@ -488,9 +488,13 @@ export default function AIChat({
 
 // Client-side mock response generator for static demo preview mode
 function getClientMockResponse(text: string, projectName: string): string {
-  const query = text.toLowerCase();
+  const query = text.toLowerCase().trim();
   
-  if (query.includes('hi') || query.includes('hello') || query.includes('hey') || query.includes('greet') || query.includes('how are you')) {
+  const matches = (keywords: string[]) => {
+    return keywords.some(k => query.includes(k));
+  };
+
+  if (matches(['hi', 'hello', 'hey', 'greet', 'how are you'])) {
     return `### Hello there! 🤖
 
 I am your AI Codebase Assistant. I've scanned and indexed the **${projectName}** repository. 
@@ -506,7 +510,7 @@ I can help you explore and understand the codebase:
 What would you like to discuss? Select a topic or ask a custom question!`;
   }
   
-  if (query.includes('readme.md') || query.includes('readme')) {
+  if (matches(['readme'])) {
     return `### README.md Analysis for ${projectName} 📖
 
 This workspace represents a comprehensive Repository Intelligence platform with advanced developer tools.
@@ -519,7 +523,7 @@ Key features highlighted in the README:
 - **Robustness Suite**: Winston logging and SQLite WAL persistence.`;
   }
   
-  if (query.includes('docker') || query.includes('container') || query.includes('dockerfile')) {
+  if (matches(['docker', 'dockr', 'container', 'compose', 'dockerfile'])) {
     return `### Containerization with Docker 🐳
 
 The repository includes a modern multi-container development and production setup:
@@ -540,7 +544,7 @@ The repository includes a modern multi-container development and production setu
 Would you like to see a sample compose run command or build variables?`;
   }
 
-  if (query.includes('database') || query.includes('sqlite') || query.includes('postgres') || query.includes('schema') || query.includes('table') || query.includes(' db') || query.includes('db ') || query.includes('migration')) {
+  if (matches(['database', 'sqlite', 'postgres', 'schema', 'table', 'db', 'migration', ' sql'])) {
     return `### Database Architecture & Schemas 🗄️
 
 The database layer is dynamically managed by a dual-driver config:
@@ -563,7 +567,7 @@ The database layer is dynamically managed by a dual-driver config:
 Let me know if you would like to review the SQLite WAL config or a database migration script!`;
   }
 
-  if (query.includes('auth') || query.includes('login') || query.includes('jwt') || query.includes('token') || query.includes('password') || query.includes('register')) {
+  if (matches(['auth', 'login', 'jwt', 'token', 'password', 'register'])) {
     return `### Authentication & Authorization System 🔑
 
 The application features a robust stateless token auth pipeline:
@@ -583,7 +587,7 @@ The application features a robust stateless token auth pipeline:
 Would you like to review the JWT signing payload or check the middleware code?`;
   }
 
-  if (query.includes('security') || query.includes('leak') || query.includes('secret') || query.includes('gitleaks') || query.includes('vulnerability') || query.includes('key') || query.includes('owasp')) {
+  if (matches(['security', 'leak', 'secret', 'gitleak', 'vulnerab', 'owasp'])) {
     return `### Codebase Security & Audits 🛡️
 
 We maintain an active security auditing pipeline to prevent credential leaks and input vulnerabilities:
@@ -600,7 +604,7 @@ We maintain an active security auditing pipeline to prevent credential leaks and
 Would you like to see how the Zip Slip check is implemented or check the database queries?`;
   }
 
-  if (query.includes('refactor') || query.includes('clean code') || query.includes('optimize') || query.includes('complexity') || query.includes('ast')) {
+  if (matches(['refactor', 'clean', 'optimiz', 'complex', 'ast'])) {
     return `### Refactoring & Code Quality Sandbox ⚡
 
 The application supports clean code standards and AST-based complexity parsing:
@@ -616,7 +620,7 @@ The application supports clean code standards and AST-based complexity parsing:
 Would you like me to refactor a specific loop structure or show you clean code guidelines?`;
   }
 
-  if (query.includes('test') || query.includes('vitest') || query.includes('coverage') || query.includes('qa') || query.includes('unit test') || query.includes('e2e')) {
+  if (matches(['test', 'vitest', 'coverage', 'qa', 'e2e'])) {
     return `### Test Automation & Code Coverage 🧪
 
 We use an automated test suite to ensure the system is stable and bug-free:
@@ -641,7 +645,7 @@ npm run test --prefix frontend
 Would you like to write a new mock test or review the existing testing configuration?`;
   }
 
-  if (query.includes('framework') || query.includes('library') || query.includes('react') || query.includes('express') || query.includes('typescript') || query.includes('vite') || query.includes('tailwind') || query.includes('node')) {
+  if (matches(['framework', 'library', 'react', 'express', 'typescript', 'ts', 'vite', 'tailwind', 'node'])) {
     return `### Tech Stack & Libraries 🚀
 
 This repository uses a modern, high-performance, strictly-typed technology stack:
@@ -661,7 +665,7 @@ This repository uses a modern, high-performance, strictly-typed technology stack
 Would you like to examine the configuration files (e.g. \`vite.config.ts\`) or add a new dependency?`;
   }
 
-  if (query.includes('api') || query.includes('route') || query.includes('endpoint') || query.includes('controller') || query.includes('stream') || query.includes('sse')) {
+  if (matches(['api', 'route', 'endpoint', 'control', 'stream', 'sse'])) {
     return `### API Endpoints Catalog 🌐
 
 The backend server is structured with clean, modular Express routers:
@@ -672,7 +676,7 @@ The backend server is structured with clean, modular Express routers:
   - \`GET /api/auth/me\` - Verify session.
 
 - **Project Management**:
-  - \`GET /api/projects\` - Retrieve active workspaces.
+  - \`GET /api/projects\` - List imported workspaces.
   - \`POST /api/projects/upload\` - Accepts ZIP file uploads (via \`multer\`) for AST profiling.
   - \`DELETE /api/projects/:id\` - Remove project from persistent DB.
 
@@ -684,7 +688,7 @@ The backend server is structured with clean, modular Express routers:
 Would you like to see a sample request payload or see how SSE stream chunks are written?`;
   }
 
-  if (query.includes('explain') || query.includes('what does')) {
+  if (matches(['explain', 'what does', 'what is'])) {
     return `### Codebase Architecture & File Summary 💡
 
 This workspace encapsulates a professional React & TypeScript frontend paired with an Express API backend.
@@ -699,7 +703,7 @@ Key directories:
    - \`services/\`: RAG indexers and AST scan parsers.`;
   }
 
-  if (query.includes('bug') || query.includes('error') || query.includes('leak') || query.includes('risk')) {
+  if (matches(['bug', 'error', 'leak', 'risk'])) {
     return `### Codebase Static Bug Analysis 🐛
 
 I ran a quick static scan on the context folders and detected several areas of interest:
@@ -710,17 +714,15 @@ I ran a quick static scan on the context folders and detected several areas of i
 I suggest wrapping the JSON extraction inside a \`try-catch\` block or checking the validation schemas.`;
   }
 
-  // Fallback response for any other query (like "what is docker")
+  // Fallback response for any other query
   return `### Developer Assistant Response 🤖
 
-I am your codebase copilot. That is a great question! Regarding *"${text}"*:
+I am your codebase copilot. That is a great question! Regarding your query: *"${text}"*
 
-In a modern web workspace like this one:
-- **TypeScript and ESModules** allow us to import libraries and maintain type-safety across client-server boundaries.
-- **Environment variables** control configurations dynamically depending on whether we deploy to staging or production.
-- **Modular routing** ensures that code remains clean, maintainable, and scalable.
+In this repository setup:
+- **Frontend SPA**: Vite compiles React & Tailwind assets dynamically with fast hot-reloading.
+- **Backend Node.js API**: Configured with parameter validation, Winston structured logging, and JWT protection.
+- **Data Integrity**: Persistence uses PostgreSQL in cloud deployments and SQLite3 in WAL mode locally.
 
-If you run the workshop backend locally and provide your API keys in the backend \`.env\` file, I will scan your files and utilize **Retrieval-Augmented Generation (RAG)** to provide live responses!
-
-What other part of the project would you like to discuss? We can explore the architecture, database configurations, or security setups!`;
+If you want to discuss a specific part of the workspace, try asking about **Docker**, **Database schemas**, **Authentication**, **Refactoring**, or **Tests**!`;
 }

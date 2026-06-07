@@ -1,4 +1,8 @@
 import { Readable } from 'stream';
+import dotenv from 'dotenv';
+
+// Ensure env variables are loaded before evaluation
+dotenv.config();
 
 const openAIKey = process.env.OPENAI_API_KEY;
 const apiKey = openAIKey;
@@ -6,6 +10,7 @@ const geminiKey = process.env.GEMINI_API_KEY;
 const isMock = !openAIKey && !geminiKey;
 
 console.log(isMock ? 'AI Service: Running in MOCK mode (No API Key)' : `AI Service: Running in REAL mode (OpenAI: ${!!openAIKey}, Gemini: ${!!geminiKey})`);
+
 
 export function isMockMode(): boolean {
   return isMock;
